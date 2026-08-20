@@ -114,12 +114,20 @@ function Admin() {
             administrators.
           </p>
           <div className="mt-6 flex flex-col gap-2">
-            <Button onClick={() => claim.mutate()} disabled={claim.isPending}>
-              {claim.isPending ? "Granting..." : "Claim admin access"}
-            </Button>
-            <p className="text-xs text-muted-foreground">
-              Works only while no administrator exists yet.
-            </p>
+            {email === ADMIN_EMAIL ? (
+              <>
+                <Button onClick={() => claim.mutate()} disabled={claim.isPending}>
+                  {claim.isPending ? "Granting..." : "Claim admin access"}
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  Reserved for the designated administrator account.
+                </p>
+              </>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Access to this dashboard is restricted to the designated administrator account.
+              </p>
+            )}
             <Button asChild variant="outline">
               <Link to="/">Back to site</Link>
             </Button>
