@@ -53,8 +53,12 @@ type Post = {
   image_url: string | null;
 };
 
+const ADMIN_EMAIL = "tester123@example.com";
+
 function Admin() {
-  const { user, isAdmin, loading, profile, signOut } = useAuth();
+  const { user, isAdmin: hasAdminRole, loading, profile, signOut } = useAuth();
+  const email = (profile?.email ?? user?.email ?? "").toLowerCase();
+  const isAdmin = hasAdminRole && email === ADMIN_EMAIL;
   const claim = useMutation({
     mutationFn: () => claimAdminRole(),
     onSuccess: () => {
@@ -110,12 +114,20 @@ function Admin() {
             administrators.
           </p>
           <div className="mt-6 flex flex-col gap-2">
-            <Button onClick={() => claim.mutate()} disabled={claim.isPending}>
-              {claim.isPending ? "Granting..." : "Claim admin access"}
-            </Button>
-            <p className="text-xs text-muted-foreground">
-              Works only while no administrator exists yet.
-            </p>
+            {email === ADMIN_EMAIL ? (
+              <>
+                <Button onClick={() => claim.mutate()} disabled={claim.isPending}>
+                  {claim.isPending ? "Granting..." : "Claim admin access"}
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  Reserved for the designated administrator account.
+                </p>
+              </>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Access to this dashboard is restricted to the designated administrator account.
+              </p>
+            )}
             <Button asChild variant="outline">
               <Link to="/">Back to site</Link>
             </Button>
