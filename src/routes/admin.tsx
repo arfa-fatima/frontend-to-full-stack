@@ -53,8 +53,12 @@ type Post = {
   image_url: string | null;
 };
 
+const ADMIN_EMAIL = "tester123@example.com";
+
 function Admin() {
-  const { user, isAdmin, loading, profile, signOut } = useAuth();
+  const { user, isAdmin: hasAdminRole, loading, profile, signOut } = useAuth();
+  const email = (profile?.email ?? user?.email ?? "").toLowerCase();
+  const isAdmin = hasAdminRole && email === ADMIN_EMAIL;
   const claim = useMutation({
     mutationFn: () => claimAdminRole(),
     onSuccess: () => {
